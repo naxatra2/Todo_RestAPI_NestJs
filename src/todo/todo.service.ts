@@ -6,32 +6,32 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TodoService {
-  constructor(private readonly databaseService: DatabaseService){}
+  constructor(private readonly databaseService: DatabaseService) { }
 
-  async create(createTodoDto: CreateTodoDto, email: string){
-    try{
+  async create(createTodoDto: CreateTodoDto, email: string) {
+    try {
       const user = await this.databaseService.user.findUnique({ where: { email } });
       if (!user) {
         throw new Error('User not found');
       }
       let data: Prisma.TodoCreateInput = {
-        description : createTodoDto.description,
+        description: createTodoDto.description,
         task: createTodoDto.task,
-        status : 'ACTIVE',
+        status: 'ACTIVE',
         user: {
           connect: { email: user.email },
         },
       }
-      return  this.databaseService.todo.create({data});
-    }catch(err){
+      return this.databaseService.todo.create({ data });
+    } catch (err) {
       return err
     }
-    
+
   }
 
-  async findAll( userEmail: string) {
-    return  this.databaseService.todo.findMany({
-      where:{
+  async findAll(userEmail: string) {
+    return this.databaseService.todo.findMany({
+      where: {
         userEmail: userEmail
       },
     });
@@ -39,7 +39,7 @@ export class TodoService {
 
   async findOne(id: number) {
     return this.databaseService.todo.findFirst({
-      where:{
+      where: {
         id: id
       }
     })
@@ -47,8 +47,8 @@ export class TodoService {
 
   async update(id: number, updateTodoDto: UpdateTodoDto) {
     return this.databaseService.todo.update({
-      where:{
-        id:id
+      where: {
+        id: id
       },
       data: updateTodoDto
     });
@@ -56,7 +56,7 @@ export class TodoService {
 
   async remove(id: number) {
     return this.databaseService.todo.delete({
-      where:{
+      where: {
         id: id
       }
     });
